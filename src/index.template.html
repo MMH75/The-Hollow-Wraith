@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Hollow Wraith</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&display=block" rel="stylesheet">
+  <!-- GAME_STYLE -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="fps"></div>
+  <div id="stamina"><div id="staminaFill"></div></div>
+  <div id="keysHud"></div>
+  <div id="flashRed"></div>
+  <div id="caught">
+    <h2>Caught</h2>
+    <p>The Hollow Wraith found you.</p>
+    <button id="retryBtn">Try again</button>
+  </div>
+  <div id="won">
+    <h2>You escaped</h2>
+    <p>The Hollow Wraith will have to wait for someone else.</p>
+    <p id="winStats"></p>
+    <button id="againBtn">Play again</button>
+  </div>
+  <div id="crosshair"></div>
+  <div id="prompt"></div>
+  <div id="roomName"></div>
+  <div id="message"></div>
+
+  <div id="overlay">
+    <div class="panel">
+      <div class="title">
+        <h1 aria-label="The Hollow Wraith"><span class="the" aria-hidden="true"><span style="--r:2deg;--y:2px;--s:1.12">T</span><span style="--r:-3deg;--y:0px;--s:1.12">H</span><span style="--r:-3deg;--y:0px;--s:1.12">E</span></span><span class="name" aria-hidden="true"><span style="--r:-3deg;--y:-2px;--s:0.9">H</span><span style="--r:-2deg;--y:2px;--s:0.9">O</span><span style="--r:4deg;--y:-2px;--s:1.12">L</span><span style="--r:-5deg;--y:2px;--s:0.94">L</span><span style="--r:-4deg;--y:2px;--s:1.04">O</span><span style="--r:4deg;--y:-2px;--s:1.0">W</span><span class="gap"> </span><span style="--r:3deg;--y:0px;--s:1.04">W</span><span style="--r:4deg;--y:4px;--s:1.04">R</span><span style="--r:3deg;--y:-4px;--s:1.0">A</span><span style="--r:2deg;--y:8px;--s:1.08">I</span><span style="--r:-3deg;--y:8px;--s:1.12">T</span><span style="--r:5deg;--y:-2px;--s:1.0">H</span></span></h1>
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="5"/></filter></svg>
+        <span class="drip" style="--x:9%;--h:46px;--t:5.5s;--d:0s"></span>
+        <span class="drip" style="--x:21%;--h:24px;--t:4.2s;--d:1.6s"></span>
+        <span class="drip" style="--x:34%;--h:62px;--t:6.8s;--d:0.7s"></span>
+        <span class="drip" style="--x:47%;--h:30px;--t:4.8s;--d:2.4s"></span>
+        <span class="drip" style="--x:58%;--h:54px;--t:6.1s;--d:3.1s"></span>
+        <span class="drip" style="--x:71%;--h:20px;--t:3.9s;--d:0.3s"></span>
+        <span class="drip" style="--x:83%;--h:40px;--t:5.2s;--d:1.1s"></span>
+        <span class="drip" style="--x:93%;--h:28px;--t:4.6s;--d:2.9s"></span>
+      </div>
+      <p class="sub">Check-in is permanent.</p>
+      <p class="goal">Keys are hidden around the house. Find any four. Unlock the front door. Get out.</p>
+      <button id="startBtn">Enter</button>
+      <div class="settings">
+        <div class="quality">
+          <span>Quality</span>
+          <button data-quality="low">Low</button>
+          <button data-quality="medium">Medium</button>
+          <button data-quality="high">High</button>
+        </div>
+        <p id="qualityNote"></p>
+        <div class="quality">
+          <span>Wraiths</span>
+          <button id="wraithMinus" aria-label="Fewer Wraiths">&minus;</button>
+          <b id="wraithCount">1</b>
+          <button id="wraithPlus" aria-label="More Wraiths">+</button>
+        </div>
+        <p id="wraithNote"></p>
+        <div class="quality">
+          <span>Difficulty</span>
+          <button data-difficulty="easy">Easy</button>
+          <button data-difficulty="medium">Medium</button>
+          <button data-difficulty="hard">Hard</button>
+        </div>
+        <p id="difficultyNote"></p>
+      </div>
+      <div class="controls">
+        <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move &nbsp; <kbd>Mouse</kbd> look</div>
+        <div><kbd>Shift</kbd> run (uses stamina) &nbsp; <kbd>C</kbd> crouch</div>
+        <div><kbd>E</kbd> doors, drawers, keys, hiding</div>
+        <div><kbd>F</kbd> flashlight &nbsp; <kbd>P</kbd> FPS &nbsp; <kbd>Esc</kbd> pause</div>
+      </div>
+      <p class="hint">Headphones recommended.</p>
+    </div>
+  </div>
+
+  <!-- GAME_SCRIPT -->
+</body>
+</html>

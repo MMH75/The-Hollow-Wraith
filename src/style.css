@@ -1,0 +1,270 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: #c9bfa8;
+  font-family: 'IM Fell English', Georgia, serif;
+  user-select: none;
+}
+
+canvas { display: block; }
+
+#fps {
+  position: fixed;
+  top: 10px;
+  left: 12px;
+  font: 12px/1 Consolas, monospace;
+  color: #9a9080;
+  text-shadow: 0 0 3px #000;
+  pointer-events: none;
+  display: none;
+  z-index: 5;
+}
+#fps.show { display: block; }
+
+#crosshair {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  margin: -1.5px 0 0 -1.5px;
+  border-radius: 50%;
+  background: rgba(220, 210, 190, 0.45);
+  pointer-events: none;
+}
+
+#prompt, #roomName, #message {
+  position: fixed;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  text-shadow: 0 0 8px #000, 0 0 2px #000;
+}
+#prompt { top: calc(50% + 34px); font-size: 17px; letter-spacing: 0.08em; color: #d8ccb0; transition-duration: 0.2s; }
+#roomName { top: 9%; font-family: 'IM Fell English SC', Georgia, serif; font-size: 30px; letter-spacing: 0.15em; color: #a89c84; }
+#message { bottom: 16%; font-style: italic; font-size: 20px; color: #c9bfa8; }
+.show { opacity: 1 !important; }
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  overflow-y: auto;
+  /* the library photo, darkened (most of all behind the text) so the menu stays readable */
+  background:
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.5) 45%, rgba(0, 0, 0, 0.82) 100%),
+    url('MENU_BACKGROUND') center / cover no-repeat,
+    #000;
+  transition: opacity 0.8s ease;
+}
+#overlay.hidden { opacity: 0; pointer-events: none; }
+.panel { text-align: center; margin: auto; padding: clamp(12px, 3vh, 32px) 16px; width: 100%; box-sizing: border-box; }
+
+/* Title: red dripping lettering with blood running down from it */
+.title { position: relative; display: inline-block; margin-bottom: clamp(12px, 3.5vh, 40px); }
+h1 {
+  font-family: 'IM Fell English SC', Georgia, serif;
+  font-weight: normal;
+  font-size: clamp(34px, min(8.5vw, 10vh), 112px);
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  filter: url(#rough);   /* ragged, dry-brush edges */
+  margin: 0;
+  color: #d4402f;
+  text-shadow: 0 0 22px rgba(160, 20, 10, 0.45), 0 3px 0 #3a0806;
+}
+h1 .the, h1 .name { display: block; }
+h1 .the { font-size: 0.42em; letter-spacing: 0.3em; margin-bottom: -0.12em; }
+h1 .gap { width: 0.35em; }
+h1 span span {
+  display: inline-block;
+  transform: translateY(var(--y)) rotate(var(--r)) scale(var(--s));
+}
+.drip {
+  position: absolute;
+  top: 82%;
+  left: var(--x);
+  width: 5px;
+  height: 0;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(#8a2418, #d4402f);
+  animation: drip var(--t) var(--d) infinite cubic-bezier(0.5, 0, 0.8, 0.6);
+}
+.drip::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 10px;
+  height: 13px;
+  margin-left: -5px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: #d4402f;
+}
+@keyframes drip {
+  0% { height: 0; opacity: 0; }
+  8% { opacity: 1; }
+  70% { height: var(--h); opacity: 1; }
+  100% { height: var(--h); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drip { animation: none; height: var(--h); }
+}
+.sub { font-style: italic; color: #7a2a24; margin: 0 0 clamp(4px, 1vh, 10px); font-size: clamp(15px, 2vh, 18px); }
+#startBtn, #retryBtn, #againBtn {
+  font-family: 'IM Fell English SC', Georgia, serif;
+  font-size: 22px;
+  letter-spacing: 0.25em;
+  color: #c9bfa8;
+  background: #000;
+  border: 1px solid #5a0000;
+  padding: 12px 40px;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+#startBtn:hover, #retryBtn:hover, #againBtn:hover { background: #2a0000; border-color: #b00000; color: #fff; }
+.controls {
+  margin: clamp(14px, 3.5vh, 34px) auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: center;
+  column-gap: 40px;
+  row-gap: 8px;
+  text-align: left;
+  color: #8a8070;
+  font-size: 14px;
+}
+@media (max-width: 640px) {
+  .controls { grid-template-columns: auto; text-align: center; }
+}
+kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  margin: 0 2px;
+  border: 1px solid #4a4034;
+  border-radius: 3px;
+  font-family: Georgia, serif;
+  font-size: 12px;
+  color: #b0a68f;
+  background: rgba(255, 255, 255, 0.03);
+}
+.hint { margin: clamp(10px, 2.5vh, 24px) 0 0; font-size: 13px; color: #5d5548; font-style: italic; }
+
+.settings { margin-top: clamp(14px, 3.5vh, 30px); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.quality { display: flex; gap: 6px; justify-content: center; align-items: center; color: #7a7062; font-size: 14px; }
+.quality span { margin-right: 6px; letter-spacing: 0.1em; }
+.quality button {
+  font-family: 'IM Fell English SC', Georgia, serif;
+  font-size: 14px;
+  color: #8a8070;
+  background: #000;
+  border: 1px solid #2a1a14;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+.quality button:hover { border-color: #5a0000; color: #c9bfa8; }
+.quality button.active { border-color: #b00000; color: #e0d6c0; background: #1a0000; }
+#qualityNote { min-height: 16px; margin: 8px 0 0; font-size: 12px; font-style: italic; color: #6a6052; }
+
+/* stamina bar, bottom centre; hidden while full */
+#stamina {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  width: 380px;
+  max-width: calc(100% - 32px);
+  height: 12px;
+  transform: translateX(-50%);
+  padding: 2px;
+  box-sizing: border-box;
+  border: 1px solid rgba(201, 191, 168, 0.3);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.6s;
+  pointer-events: none;
+}
+#staminaFill { height: 100%; width: 100%; border-radius: 1px; background: #c9bfa8; box-shadow: 0 0 6px rgba(201, 191, 168, 0.4); }
+#stamina.tired #staminaFill { background: #a0201a; box-shadow: 0 0 6px rgba(160, 32, 26, 0.6); }
+
+/* jumpscare red flash and the caught screen */
+#flashRed { position: fixed; inset: 0; background: #7a0000; opacity: 0; pointer-events: none; }
+#caught, #won {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+#caught.show, #won.show { pointer-events: auto; }
+#caught h2, #won h2 {
+  font-family: 'IM Fell English SC', Georgia, serif;
+  font-weight: normal;
+  font-size: clamp(48px, 10vw, 110px);
+  margin: 0;
+  color: #d4402f;
+  filter: url(#rough);
+  text-shadow: 0 0 22px rgba(160, 20, 10, 0.45);
+}
+#caught p { color: #7a2a24; font-style: italic; font-size: 18px; margin: 10px 0 34px; }
+
+/* number of Wraiths and difficulty */
+#qualityNote:empty, #wraithNote:empty { display: none; }
+#qualityNote, #wraithNote, #difficultyNote { margin: -3px 0 2px; }
+#wraithCount { display: inline-block; min-width: 30px; font-size: 17px; font-weight: normal; color: #e0d6c0; }
+#wraithMinus, #wraithPlus { min-width: 34px; font-size: 16px; }
+.quality button:disabled { opacity: 0.35; cursor: default; }
+#difficultyNote { min-height: 16px; margin: 8px 0 0; font-size: 12px; font-style: italic; color: #6a6052; }
+
+/* the mission: key counter and the escape screen */
+.goal { color: #b8ad94; margin: 0 0 clamp(14px, 3vh, 30px); font-size: clamp(14px, 2vh, 16px); letter-spacing: 0.04em; }
+#keysHud {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  font-family: 'IM Fell English SC', Georgia, serif;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  color: #c9bfa8;
+  text-shadow: 0 0 6px #000, 0 0 2px #000;
+  opacity: 0;
+  transition: opacity 0.6s, color 0.6s;
+  pointer-events: none;
+}
+#keysHud.all { color: #e8c46a; text-shadow: 0 0 10px rgba(232, 196, 106, 0.5), 0 0 2px #000; }
+#won h2 { color: #e8dcc0; text-shadow: 0 0 24px rgba(232, 196, 106, 0.35); }
+#won p { color: #9a9080; font-style: italic; font-size: 18px; margin: 10px 0 0; }
+#won #winStats { font-style: normal; color: #c9bfa8; letter-spacing: 0.06em; margin: 18px 0 34px; }
+
+/* warning under the Wraith count, more alarming the higher it goes */
+#wraithNote { font-family: 'IM Fell English SC', Georgia, serif; font-size: 14px; letter-spacing: 0.12em; }
+#wraithNote.warn { color: #b8873a; }
+#wraithNote.veryhard { color: #d4602f; }
+#wraithNote.impossible { color: #e8392a; text-shadow: 0 0 8px rgba(232, 57, 42, 0.45); }
+#wraithNote.nightmare {
+  color: #ff2a1a;
+  font-size: 17px;
+  text-shadow: 0 0 12px rgba(255, 42, 26, 0.7);
+  filter: url(#rough);
+  animation: tremble 0.35s infinite;
+}
+@keyframes tremble {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 1px); }
+  50% { transform: translate(1px, 0); }
+  75% { transform: translate(0, -1px); }
+}
+@media (prefers-reduced-motion: reduce) { #wraithNote.nightmare { animation: none; } }

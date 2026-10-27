@@ -1,0 +1,8 @@
+# developer tools (spectator mode) are kept out of the public repository
+developer/
+
+# local editor / assistant settings
+.claude/
+
+# Python caches from the build scripts
+__pycache__/
